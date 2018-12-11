@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:8000/ -->
+<html class=" js no-mobile desktop no-ie chrome chrome68 root-section gradient rgba opacity textshadow multiplebgs boxshadow borderimage borderradius cssreflections csstransforms csstransitions no-touch no-retina fontface domloaded w-1366 gt-240 gt-320 gt-480 gt-640 gt-768 gt-800 gt-1024 gt-1280 lt-1440 lt-1680 lt-1920 no-portrait landscape" id="index-page"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Valid Hole Fits</title>
+
+    <link rel="stylesheet" href="./index_files/reveal.css">
+    <link rel="stylesheet" href="./index_files/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="./index_files/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script><link rel="stylesheet" type="text/css" href="./index_files/paper.css">
+    <style type="text/css">
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4,
+      .reveal h5,
+      .reveal h6 {
+          text-transform: none;
+      }
+    </style><script type="text/javascript" src="./index_files/marked.js"></script><script type="text/javascript" src="./index_files/markdown.js"></script><script type="text/javascript" src="./index_files/notes.js"></script><script type="text/javascript" src="./index_files/highlight.js"></script><script type="text/javascript" src="./index_files/zoom.js"></script>
+  </head>
+  <body style="transition: -webkit-transform 0.8s ease 0s;">
+    <div class="reveal slide center has-vertical-slides has-horizontal-slides ready" role="application" data-transition-speed="default" data-background-transition="fade">
+      <div class="slides" style="width: 960px; height: 700px; left: 50%; top: 50%; bottom: auto; right: auto; transform: translate(-50%, -50%) scale(0.809143);">
+        <section class="stack present" style="top: 0px; display: block;"><section data-markdown="" data-markdown-parsed="true" class="present" style="top: 220px; display: block;"><h1 id="valid-hole-fits">Valid Hole Fits</h1>
+<p>と Refinement Hole Fits</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" hidden="" style="top: 196px; display: block;"><p>ghc-8.6.1 で追加された</p>
+<h2 id="valid-hole-fits">Valid Hole Fits</h2>
+<p>について紹介します</p>
+</section></section><section hidden="" aria-hidden="true" class="stack future" style="top: 0px; display: block;"><section data-markdown="" data-markdown-parsed="true" style="top: 243px; display: block;"><h2 id="valid-hole-fits-">Valid Hole Fits とは</h2>
+<p>Typed-Holes に追加された新たな機能</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 233px; display: block;"><p>ところで</p>
+<h2 id="typed-holes-">Typed-Holes って何？</h2>
+</section></section><section hidden="" aria-hidden="true" class="stack future" style="top: 0px; display: block;"><section data-markdown="" data-markdown-parsed="true" style="top: 243px; display: block;"><h2 id="typed-holes-">Typed-Holes (型付き穴)</h2>
+<p>ghc-7.8 で追加された機能</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><p>ソースコード内にアンダースコア "<code>_</code>" で穴をあけると</p>
+<pre><code class="lang-haskell hljs"><span class="hljs-title">f</span> :: <span class="hljs-type">String</span>
+<span class="hljs-title">f</span> = _ <span class="hljs-string">"hello, world"</span>
+</code></pre>
+<p>コンパイル時にエラーとして穴の情報を教えてくれる</p>
+<pre><code class="lang-haskell hljs"><span class="hljs-title">example</span>.hs:<span class="hljs-number">6</span>:<span class="hljs-number">5</span>: error:
+    • <span class="hljs-type">Found</span> hole: _ :: [<span class="hljs-type">Char</span>] -&gt; <span class="hljs-type">String</span>
+    • <span class="hljs-type">In</span> the expression: _
+      <span class="hljs-type">In</span> the expression: _ <span class="hljs-string">"hello, world"</span>
+      <span class="hljs-type">In</span> an equation for ‘f’: f = _ <span class="hljs-string">"hello, world"</span>
+    • <span class="hljs-type">Relevant</span> bindings include
+        f :: <span class="hljs-type">String</span>
+          (bound at example.hs:<span class="hljs-number">6</span>:<span class="hljs-number">1</span>)
+</code></pre>
+<p class="fragment" data-fragment-index="0">「穴の型は <font color="red">[Char] -&gt; String</font> だよ!」</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="typed-holes-">Typed-Holes とは</h2>
+<p>何か関数を入れたいけどその型がわからないときに</p>
+<p>穴を入れるとエラーとしてその型を教えてくれる機能</p>
+</section></section><section hidden="" aria-hidden="true" class="stack future" style="top: 350px; display: none;"><section data-markdown="" data-markdown-parsed="true" style="top: 350px; display: none;"><h2 id="typed-holes-">Typed-Holes を利用した開発例</h2>
+<ol>
+<li><p><span class="fragment" data-fragment-index="0">穴を空ける</span></p>
+</li>
+<li><p><span class="fragment" data-fragment-index="1">型がわかる</span></p>
+</li>
+<li><p><span class="fragment" data-fragment-index="2"><span class="fragment highlight-red" data-fragment-index="3">その型の関数を探す</span></span></p>
+</li>
+<li><p><span class="fragment" data-fragment-index="4">穴を埋める</span></p>
+</li>
+</ol>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="-">型から関数を探す</h2>
+<p>Hoogle を使う?</p>
+<p>↓</p>
+<p></p><p class="fragment grow" data-fragment-index="0">Valid Hole Fits</p>を利用しよう！<p></p>
+</section></section><section hidden="" aria-hidden="true" class="stack future" style="top: 350px; display: none;"><section data-markdown="" data-markdown-parsed="true" style="top: 350px; display: none;"><h2 id="valid-hole-fits">Valid Hole Fits</h2>
+<h3 id="-">(妥当な 穴に フィットするもの)</h3>
+<p>　</p>
+<p>Typed-Holesのエラーで</p>
+<p>穴の型を持つ関数を表示してくれる機能</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><p>Valid hole fits が追加された Typed-Holes のエラー</p>
+<pre><code class="lang-haskell hljs"><span class="hljs-title">example</span>.hs:<span class="hljs-number">6</span>:<span class="hljs-number">5</span>: error:
+    • <span class="hljs-type">Found</span> hole: _ :: [<span class="hljs-type">Char</span>] -&gt; <span class="hljs-type">String</span>
+    • <span class="hljs-type">In</span> the expression: _
+      <span class="hljs-type">In</span> the expression: _ <span class="hljs-string">"hello, world"</span>
+      <span class="hljs-type">In</span> an equation for ‘f’: f = _ <span class="hljs-string">"hello, world"</span>
+    • <span class="hljs-type">Relevant</span> bindings include
+        it :: [<span class="hljs-type">Char</span>] -&gt; <span class="hljs-type">String</span> (bound at &lt;interactive&gt;:<span class="hljs-number">2</span>:<span class="hljs-number">1</span>)
+      <span class="hljs-type">Valid</span> hole fits include
+        cycle :: <span class="hljs-keyword">forall</span> a. [a] -&gt; [a]
+        init :: <span class="hljs-keyword">forall</span> a. [a] -&gt; [a]
+        reverse :: <span class="hljs-keyword">forall</span> a. [a] -&gt; [a]
+        tail :: <span class="hljs-keyword">forall</span> a. [a] -&gt; [a]
+        fail :: <span class="hljs-keyword">forall</span> (m :: * -&gt; *) a. <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">String</span> -&gt; m a
+        show :: <span class="hljs-keyword">forall</span> a. <span class="hljs-type">Show</span> a =&gt; a -&gt; <span class="hljs-type">String</span>
+        (<span class="hljs-type">Some</span> hole fits suppressed; use -fmax-valid-hole-fits=<span class="hljs-type">N</span> or -fno-max-valid-hole-fits)
+</code></pre>
+<p><code>cycle</code>, <code>init</code>, <code>reverse</code> などの関数を提案してくれる</p>
+<p><small>※ <code>-funclutter-valid-hole-fits</code> オプションで表示を簡単にしています．</small></p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="-1-lens">例1: lens</h2>
+<pre><code class="lang-haskell hljs"><span class="hljs-keyword">import</span> Control.Lens
+<span class="hljs-keyword">import</span> Control.Monad.State
+
+<span class="hljs-class"><span class="hljs-keyword">newtype</span> <span class="hljs-type">T</span> = <span class="hljs-type">T</span> { <span class="hljs-title">_v</span> :: <span class="hljs-type">Int</span> }</span>
+
+<span class="hljs-title">val</span> :: <span class="hljs-type">Lens'</span> <span class="hljs-type">T</span> <span class="hljs-type">Int</span>
+<span class="hljs-title">val</span> f (<span class="hljs-type">T</span> i) = <span class="hljs-type">T</span> &lt;$&gt; f i
+
+<span class="hljs-title">updT</span> :: <span class="hljs-type">T</span> -&gt; <span class="hljs-type">T</span>
+<span class="hljs-title">updT</span> t = t &amp;~ <span class="hljs-keyword">do</span>
+  _ val (<span class="hljs-number">1</span> :: <span class="hljs-type">Int</span>)
+</code></pre>
+<p>この Typed-Hole の型は？</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><p><code>((Int -&gt; f0 Int) -&gt; T -&gt; f0 T)</code></p>
+<p><code>-&gt; Int -&gt; State T a0</code></p>
+<pre><code class="lang-haskell hljs"><span class="hljs-title">lens</span>.hs:<span class="hljs-number">17</span>:<span class="hljs-number">3</span>: error:
+    • <span class="hljs-type">Found</span> hole:
+        _ :: ((<span class="hljs-type">Int</span> -&gt; f0 <span class="hljs-type">Int</span>) -&gt; <span class="hljs-type">T</span> -&gt; f0 <span class="hljs-type">T</span>) -&gt; <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">State</span> <span class="hljs-type">T</span> a0
+      <span class="hljs-type">Where</span>: ‘f0’ is an ambiguous <span class="hljs-class"><span class="hljs-keyword">type</span> variable</span>
+             ‘a0’ is an ambiguous <span class="hljs-class"><span class="hljs-keyword">type</span> variable</span>
+    • <span class="hljs-type">In</span> the expression: _
+      <span class="hljs-type">In</span> a stmt <span class="hljs-keyword">of</span> a '<span class="hljs-keyword">do</span>' block: _ val (<span class="hljs-number">1</span> :: <span class="hljs-type">Int</span>)
+      <span class="hljs-type">In</span> the second argument <span class="hljs-keyword">of</span> ‘(&amp;~)’, namely ‘<span class="hljs-keyword">do</span> _ val (<span class="hljs-number">1</span> :: <span class="hljs-type">Int</span>)’
+</code></pre>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h3 id="hoogle-">Hoogle で調べてみた</h3>
+<p><img src="./index_files/hoogle.png" alt=""></p>
+<p>無い...</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h3 id="hayoo-">Hayoo! で調べてみた</h3>
+<p><img src="./index_files/hayoo.png" alt=""></p>
+<p>無い...</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h3 id="stackage-">Stackage で調べてみた</h3>
+<p><img src="./index_files/stackage.png" alt=""></p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h3 id="valid-hole-fits">Valid Hole Fits</h3>
+<pre><code class="lang-haskell hljs">      <span class="hljs-type">Valid</span> hole fits include
+        (#=) :: <span class="hljs-keyword">forall</span> s (m :: * -&gt; *) a b.
+                <span class="hljs-type">MonadState</span> s m =&gt;
+                <span class="hljs-type">ALens</span> s s a b -&gt; b -&gt; m ()
+        (&lt;#=) :: <span class="hljs-keyword">forall</span> s (m :: * -&gt; *) a b.
+                 <span class="hljs-type">MonadState</span> s m =&gt;
+                 <span class="hljs-type">ALens</span> s s a b -&gt; b -&gt; m b
+        (&lt;*=) :: <span class="hljs-keyword">forall</span> s (m :: * -&gt; *) a.
+                 (<span class="hljs-type">MonadState</span> s m, <span class="hljs-type">Num</span> a) =&gt;
+                 <span class="hljs-type">LensLike'</span> ((,) a) s a -&gt; a -&gt; m a
+        (&lt;+=) :: <span class="hljs-keyword">forall</span> s (m :: * -&gt; *) a.
+                 (<span class="hljs-type">MonadState</span> s m, <span class="hljs-type">Num</span> a) =&gt;
+                 <span class="hljs-type">LensLike'</span> ((,) a) s a -&gt; a -&gt; m a
+        (&lt;-=) :: <span class="hljs-keyword">forall</span> s (m :: * -&gt; *) a.
+                 (<span class="hljs-type">MonadState</span> s m, <span class="hljs-type">Num</span> a) =&gt;
+                 <span class="hljs-type">LensLike'</span> ((,) a) s a -&gt; a -&gt; m a
+        (&lt;&lt;*=) :: <span class="hljs-keyword">forall</span> s (m :: * -&gt; *) a.
+                  (<span class="hljs-type">MonadState</span> s m, <span class="hljs-type">Num</span> a) =&gt;
+                  <span class="hljs-type">LensLike'</span> ((,) a) s a -&gt; a -&gt; m a
+</code></pre>
+<p>良さそうなのが出てきた！！</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="valid-hole-fits-">Valid Hole Fits は</h2>
+<p>穴がある場所のスコープから</p>
+<p>使える関数を探してくれる！！</p>
+</section></section><section hidden="" aria-hidden="true" class="stack future" style="top: 350px; display: none;"><section data-markdown="" data-markdown-parsed="true" style="top: 350px; display: none;"><h2 id="-2-">例2: 問題を解く</h2>
+<p>(Programming in Haskell Second Edition,</p>
+<p>Chapter 4, Exercise 1)</p>
+<p>　</p>
+<p>長さが偶数のリストを半分にする関数</p>
+<p><code>halve :: [a] -&gt; ([a],[a])</code> を作れ．</p>
+<pre><code class="lang-haskell hljs">&gt; halve [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>]
+([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>],[<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>])
+</code></pre>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="-">穴をあける</h2>
+<pre><code class="lang-haskell hljs">$ stack repl <span class="hljs-comment">--resolver nightly-2018-12-06</span>
+<span class="hljs-type">Prelude</span>&gt; _ :: [a] -&gt; ([a],[a])
+&lt;interactive&gt;:<span class="hljs-number">1</span>:<span class="hljs-number">1</span>: error:
+    • <span class="hljs-type">Found</span> hole: _ :: [a1] -&gt; ([a1], [a1])
+      <span class="hljs-type">Where</span>: ‘a1’ is a rigid <span class="hljs-class"><span class="hljs-keyword">type</span> variable bound by</span>
+               an expression <span class="hljs-class"><span class="hljs-keyword">type</span> signature:</span>
+                 <span class="hljs-keyword">forall</span> a1. [a1] -&gt; ([a1], [a1])
+               at &lt;interactive&gt;:<span class="hljs-number">1</span>:<span class="hljs-number">6</span><span class="hljs-number">-21</span>
+    • <span class="hljs-type">In</span> the expression: _ :: [a] -&gt; ([a], [a])
+      <span class="hljs-type">In</span> an equation for ‘it’: it = _ :: [a] -&gt; ([a], [a])
+    • <span class="hljs-type">Relevant</span> bindings include
+        it :: [a] -&gt; ([a], [a]) (bound at &lt;interactive&gt;:<span class="hljs-number">1</span>:<span class="hljs-number">1</span>)
+      <span class="hljs-type">Valid</span> hole fits include
+        return :: <span class="hljs-keyword">forall</span> (m :: * -&gt; *) a. <span class="hljs-type">Monad</span> m =&gt; a -&gt; m a
+        pure :: <span class="hljs-keyword">forall</span> (f :: * -&gt; *) a. <span class="hljs-type">Applicative</span> f =&gt; a -&gt; f a
+        mempty :: <span class="hljs-keyword">forall</span> a. <span class="hljs-type">Monoid</span> a =&gt; a
+</code></pre>
+<p><code>return</code>, <code>pure</code>, <code>mempty</code> ???</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><p>本当に欲しいものは <code>break</code>, <code>span</code>, <code>splitAt</code> など</p>
+<p>　</p>
+<p class="fragment" data-fragment-index="0">Refinement Hole Fits で可能に</p>
+</section></section><section hidden="" aria-hidden="true" class="stack future" style="top: 350px; display: none;"><section data-markdown="" data-markdown-parsed="true" style="top: 350px; display: none;"><h2 id="refinement-hole-fits">Refinement Hole Fits</h2>
+<h2 id="-">洗練された 穴に フィットするもの</h2>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="refinement-hole-fits-">Refinement Hole Fits の使い方</h2>
+<p>オプション <code>-frefinement-level-hole-fits=N</code></p>
+<p>で使えるようにになる</p>
+<p>　</p>
+<p>レベル <code>N</code> はフィットが持つ最大の穴の数</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="-">使ってみよう</h2>
+<pre><code class="lang-haskell hljs">$ stack repl <span class="hljs-comment">--resolver nightly-2018-12-06 --ghci-options -frefinement-level-hole-fits=1 -funclutter-valid-hole-fits</span>
+
+<span class="hljs-type">Prelude</span>&gt; _ :: [a] -&gt; ([a],[a])
+
+&lt;interactive&gt;:<span class="hljs-number">1</span>:<span class="hljs-number">1</span>: error:
+    • <span class="hljs-type">Found</span> hole: _ :: [a1] -&gt; ([a1], [a1])
+      <span class="hljs-type">Where</span>: ‘a1’ is a rigid <span class="hljs-class"><span class="hljs-keyword">type</span> variable bound by</span>
+               an expression <span class="hljs-class"><span class="hljs-keyword">type</span> signature:</span>
+                 <span class="hljs-keyword">forall</span> a1. [a1] -&gt; ([a1], [a1])
+               at &lt;interactive&gt;:<span class="hljs-number">1</span>:<span class="hljs-number">6</span><span class="hljs-number">-21</span>
+    • <span class="hljs-type">In</span> the expression: _ :: [a] -&gt; ([a], [a])
+      <span class="hljs-type">In</span> an equation for ‘it’: it = _ :: [a] -&gt; ([a], [a])
+    • <span class="hljs-type">Relevant</span> bindings include
+        it :: [a] -&gt; ([a], [a]) (bound at &lt;interactive&gt;:<span class="hljs-number">1</span>:<span class="hljs-number">1</span>)
+      <span class="hljs-type">Valid</span> hole fits include
+        return :: <span class="hljs-keyword">forall</span> (m :: * -&gt; *) a. <span class="hljs-type">Monad</span> m =&gt; a -&gt; m a
+        pure :: <span class="hljs-keyword">forall</span> (f :: * -&gt; *) a. <span class="hljs-type">Applicative</span> f =&gt; a -&gt; f a
+        mempty :: <span class="hljs-keyword">forall</span> a. <span class="hljs-type">Monoid</span> a =&gt; a
+      <span class="hljs-type">Valid</span> refinement hole fits include
+        break (_ :: a1 -&gt; <span class="hljs-type">Bool</span>)
+          <span class="hljs-keyword">where</span> break :: <span class="hljs-keyword">forall</span> a. (a -&gt; <span class="hljs-type">Bool</span>) -&gt; [a] -&gt; ([a], [a])
+        span (_ :: a1 -&gt; <span class="hljs-type">Bool</span>)
+          <span class="hljs-keyword">where</span> span :: <span class="hljs-keyword">forall</span> a. (a -&gt; <span class="hljs-type">Bool</span>) -&gt; [a] -&gt; ([a], [a])
+        splitAt (_ :: <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> splitAt :: <span class="hljs-keyword">forall</span> a. <span class="hljs-type">Int</span> -&gt; [a] -&gt; ([a], [a])
+        mapM (_ :: a1 -&gt; ([a1], a1))
+          <span class="hljs-keyword">where</span> mapM :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) (m :: * -&gt; *) a b.
+                        (<span class="hljs-type">Traversable</span> t, <span class="hljs-type">Monad</span> m) =&gt;
+                        (a -&gt; m b) -&gt; t a -&gt; m (t b)
+        traverse (_ :: a1 -&gt; ([a1], a1))
+          <span class="hljs-keyword">where</span> traverse :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) (f :: * -&gt; *) a b.
+                            (<span class="hljs-type">Traversable</span> t, <span class="hljs-type">Applicative</span> f) =&gt;
+                            (a -&gt; f b) -&gt; t a -&gt; f (t b)
+        const (_ :: ([a1], [a1]))
+          <span class="hljs-keyword">where</span> const :: <span class="hljs-keyword">forall</span> a b. a -&gt; b -&gt; a
+        (<span class="hljs-type">Some</span> refinement hole fits suppressed; use -fmax-refinement-hole-fits=<span class="hljs-type">N</span> or -fno-max-refinement-hole-fits)
+</code></pre>
+<p>エラーが長くなってる...</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h3 id="refinement-hole-fits-">Refinement Hole Fits の部分を抜粋</h3>
+<pre><code class="lang-haskell hljs">      <span class="hljs-type">Valid</span> refinement hole fits include
+        break (_ :: a1 -&gt; <span class="hljs-type">Bool</span>)
+          <span class="hljs-keyword">where</span> break :: <span class="hljs-keyword">forall</span> a. (a -&gt; <span class="hljs-type">Bool</span>) -&gt; [a] -&gt; ([a], [a])
+        span (_ :: a1 -&gt; <span class="hljs-type">Bool</span>)
+          <span class="hljs-keyword">where</span> span :: <span class="hljs-keyword">forall</span> a. (a -&gt; <span class="hljs-type">Bool</span>) -&gt; [a] -&gt; ([a], [a])
+        splitAt (_ :: <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> splitAt :: <span class="hljs-keyword">forall</span> a. <span class="hljs-type">Int</span> -&gt; [a] -&gt; ([a], [a])
+        mapM (_ :: a1 -&gt; ([a1], a1))
+          <span class="hljs-keyword">where</span> mapM :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) (m :: * -&gt; *) a b.
+                        (<span class="hljs-type">Traversable</span> t, <span class="hljs-type">Monad</span> m) =&gt;
+                        (a -&gt; m b) -&gt; t a -&gt; m (t b)
+        traverse (_ :: a1 -&gt; ([a1], a1))
+          <span class="hljs-keyword">where</span> traverse :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) (f :: * -&gt; *) a b.
+                            (<span class="hljs-type">Traversable</span> t, <span class="hljs-type">Applicative</span> f) =&gt;
+                            (a -&gt; f b) -&gt; t a -&gt; f (t b)
+        const (_ :: ([a1], [a1]))
+          <span class="hljs-keyword">where</span> const :: <span class="hljs-keyword">forall</span> a b. a -&gt; b -&gt; a
+</code></pre>
+<p><code>break</code>, <code>span</code>, <code>splitAt</code> がある！！</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="refinement-hole-fits-">Refinement Hole Fits とは</h2>
+<p><code>splitAt (_ :: Int)</code> や </p>
+<p><code>span (_ :: a1 -&gt; Bool)</code> のような</p>
+<p>Typed-Hole を持つものも見つけてくれる機能</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h3 id="splitat-">splitAt を使おう！</h3>
+<pre><code class="lang-haskell hljs"><span class="hljs-title">_</span> :: [a] -&gt; ([a],[a])
+</code></pre>
+<p>↓進化↓</p>
+<pre><code class="lang-haskell hljs"><span class="hljs-title">splitAt</span> (_ :: <span class="hljs-type">Int</span>) :: [a] -&gt; ([a],[a])
+</code></pre>
+<p>新しい穴についても同様に Hole Fits を探す</p>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h3 id="-">こたえ</h3>
+<pre><code class="lang-haskell hljs"><span class="hljs-title">halve</span> :: [a] -&gt; ([a],[a])
+<span class="hljs-title">halve</span> xs = splitAt (length xs `div` <span class="hljs-number">2</span>) xs
+</code></pre>
+</section></section><section hidden="" aria-hidden="true" class="stack future" style="top: 350px; display: none;"><section data-markdown="" data-markdown-parsed="true" style="top: 350px; display: none;"><h2 id="-typed-holes">まとめ① Typed-Holes</h2>
+<p>アンダースコア (<code>_</code>) で穴をあけると</p>
+<p>その型をエラーで教えてくれる</p>
+<pre><code class="lang-haskell hljs"><span class="hljs-type">Prelude</span>&gt; _ :: [<span class="hljs-type">Int</span>] -&gt; <span class="hljs-type">Int</span> 
+
+&lt;interactive&gt;:<span class="hljs-number">3</span>:<span class="hljs-number">1</span>: error:
+    • <span class="hljs-type">Found</span> hole: _ :: [<span class="hljs-type">Int</span>] -&gt; <span class="hljs-type">Int</span>
+    • <span class="hljs-type">In</span> the expression: _ :: [<span class="hljs-type">Int</span>] -&gt; <span class="hljs-type">Int</span>
+      <span class="hljs-type">In</span> an equation for ‘it’: it = _ :: [<span class="hljs-type">Int</span>] -&gt; <span class="hljs-type">Int</span>
+    • <span class="hljs-type">Relevant</span> bindings include
+        it :: [<span class="hljs-type">Int</span>] -&gt; <span class="hljs-type">Int</span> (bound at &lt;interactive&gt;:<span class="hljs-number">3</span>:<span class="hljs-number">1</span>)
+</code></pre>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="-valid-hole-fits">まとめ② Valid Hole Fits</h2>
+<p>Typed-Hole で判明した型から</p>
+<p>当てはまる関数を探してくれる</p>
+<pre><code class="lang-haskell hljs">      <span class="hljs-type">Valid</span> hole fits include
+        head :: <span class="hljs-keyword">forall</span> a. [a] -&gt; a
+        last :: <span class="hljs-keyword">forall</span> a. [a] -&gt; a
+        length :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) a. <span class="hljs-type">Foldable</span> t =&gt; t a -&gt; <span class="hljs-type">Int</span>
+        maximum :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) a. (<span class="hljs-type">Foldable</span> t, <span class="hljs-type">Ord</span> a) =&gt; t a -&gt; a
+        minimum :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) a. (<span class="hljs-type">Foldable</span> t, <span class="hljs-type">Ord</span> a) =&gt; t a -&gt; a
+        product :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) a. (<span class="hljs-type">Foldable</span> t, <span class="hljs-type">Num</span> a) =&gt; t a -&gt; a
+</code></pre>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="-refinement-hole-fits">まとめ③ Refinement Hole Fits</h2>
+<p>関数の引数として穴を持つものも探してくれる</p>
+<pre><code class="lang-haskell hljs"><span class="hljs-type">Valid</span> refinement hole fits include
+        foldl1 (_ :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> foldl1 :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) a.
+                          <span class="hljs-type">Foldable</span> t =&gt;
+                          (a -&gt; a -&gt; a) -&gt; t a -&gt; a
+        foldr1 (_ :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> foldr1 :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) a.
+                          <span class="hljs-type">Foldable</span> t =&gt;
+                          (a -&gt; a -&gt; a) -&gt; t a -&gt; a
+        foldl (_ :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span>) (_ :: <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> foldl :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) b a.
+                         <span class="hljs-type">Foldable</span> t =&gt;
+                         (b -&gt; a -&gt; b) -&gt; b -&gt; t a -&gt; b
+        foldr (_ :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span>) (_ :: <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> foldr :: <span class="hljs-keyword">forall</span> (t :: * -&gt; *) a b.
+                         <span class="hljs-type">Foldable</span> t =&gt;
+                         (a -&gt; b -&gt; b) -&gt; b -&gt; t a -&gt; b
+        const (_ :: <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> const :: <span class="hljs-keyword">forall</span> a b. a -&gt; b -&gt; a
+        ($) (_ :: [<span class="hljs-type">Int</span>] -&gt; <span class="hljs-type">Int</span>)
+          <span class="hljs-keyword">where</span> ($) :: <span class="hljs-keyword">forall</span> a b. (a -&gt; b) -&gt; a -&gt; b
+</code></pre>
+</section><section data-markdown="" data-markdown-parsed="true" class="future" aria-hidden="true" style="top: 350px; display: none;"><h2 id="-">まとめのまとめ</h2>
+<ul>
+<li><p>Typed-Hall : 穴 (<code>_</code>) の型を教えてくれる</p>
+</li>
+<li><p>Valid Hole Fits : その型の関数を教えてくれる</p>
+</li>
+<li><p>Refinement Hole Fits : Typed-Holes を含むものまで教えてくれる</p>
+</li>
+</ul>
+</section></section>
+      </div>
+    <div class="backgrounds"><div class="slide-background stack present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div><div class="slide-background present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div><div class="slide-background future" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div></div><div class="slide-background stack future" data-loaded="true" style="display: block;"><div class="slide-background-content"></div><div class="slide-background present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div><div class="slide-background future" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div></div><div class="slide-background stack future" data-loaded="true" style="display: block;"><div class="slide-background-content"></div><div class="slide-background present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div></div><div class="slide-background stack future" style="display: none;"><div class="slide-background-content"></div><div class="slide-background present" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div></div><div class="slide-background stack future" style="display: none;"><div class="slide-background-content"></div><div class="slide-background present" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div></div><div class="slide-background stack future" style="display: none;"><div class="slide-background-content"></div><div class="slide-background present" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div></div><div class="slide-background stack future" style="display: none;"><div class="slide-background-content"></div><div class="slide-background present" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div></div><div class="slide-background stack future" style="display: none;"><div class="slide-background-content"></div><div class="slide-background present" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div><div class="slide-background future" style="display: none;"><div class="slide-background-content"></div></div></div></div><div class="progress" style="display: block;"><span style="width: 0px;"></span></div><aside class="controls" data-controls-layout="bottom-right" data-controls-back-arrows="faded" style="display: block;"><button class="navigate-left" aria-label="previous slide" disabled="disabled"><div class="controls-arrow"></div></button><button class="navigate-right enabled" aria-label="next slide"><div class="controls-arrow"></div></button><button class="navigate-up" aria-label="above slide" disabled="disabled"><div class="controls-arrow"></div></button><button class="navigate-down enabled highlight" aria-label="below slide"><div class="controls-arrow"></div></button></aside><div class="slide-number" style="display: none;"></div><div class="speaker-notes" data-prevent-swipe="" tabindex="0"></div><div class="pause-overlay"><button class="resume-button">Resume presentation</button></div><div id="aria-status-div" aria-live="polite" aria-atomic="true" style="position: absolute; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);">Valid Hole Fits
+と Refinement Hole Fits
+</div></div>
+    <script src="./index_files/head.min.js"></script>
+    <script src="./index_files/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }, 
+          { src: 'plugin/zoom-js/zoom.js', async: true }
+        ]
+      });
+    </script>
+  <script src="./index_files/livereload.js" async="" defer=""></script>
+
+</body></html>
